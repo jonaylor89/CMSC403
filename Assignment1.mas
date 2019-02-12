@@ -1,0 +1,83 @@
+
+//######################
+// Prompt for Length
+//######################
+input
+store Length
+
+//######################
+// Prompt for Width
+//######################
+input
+store Width
+
+//#####################
+// Prompt for Area1
+//#####################
+input
+store UserArea
+
+//############################################
+// Multipy Length by Width to get Area2
+//############################################
+
+// Add Width to itself Length number of times
+
+load Width
+store init_Width 
+
+addLoopStart, load Width
+add init_Width
+store Width
+load Length
+subt ONE
+store Length
+skipcond 400
+jump addLoopStart
+
+// Output Area1
+load Width
+subt init_Width
+store CalcArea
+output
+
+//####################################################
+// Divide CalcArea by UserArea to get the proportion
+//####################################################
+
+// Subtract CalcArea by UserArea until the result is less than zero
+
+subLoopStart, load UserArea
+subt CalcArea
+store UserArea
+load loopCounter2
+add ONE
+store loopCounter2
+load UserArea
+skipcond 000
+jump subLoopStart
+
+// Output Proportion (loopCounter)
+load loopCounter2
+subt ONE
+store loopCounter2
+output 
+
+// HALT Execution
+HALT
+
+//################
+// Variables
+//###############
+loopCounter1, DEC 0
+loopCounter2, DEC 0
+Width, DEC 0
+Length, DEC 0
+UserArea, DEC 0
+CalcArea, DEC 0
+init_Width, DEC 0
+ONE, DEC 1
+
+
+
+
