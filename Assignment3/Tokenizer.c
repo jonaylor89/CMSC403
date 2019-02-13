@@ -3,5 +3,5 @@
 
 _Bool tokenizer(struct lexics *aLex, int *numLex, FILE inf) {
   
-  return NULL;
+  return 0;
 }

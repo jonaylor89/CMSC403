@@ -3,5 +3,5 @@
 
 _Bool parser(struct lexics *someLexics, int numOfLexics) {
 
-  return NULL;
+  return 0;
 }

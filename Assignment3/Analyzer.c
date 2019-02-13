@@ -1,4 +1,6 @@
 #include "Analyzer.h"
+#include "Tokenizer.h"
+#include "Parser.h"
 
 int main(){
 	//initialize file pointer to NULL 
