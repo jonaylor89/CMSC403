@@ -10,6 +10,8 @@
 
 #define isDigit(ch)  ('0' <= ch && ch <= '9')
 
+#define isWhitespace(ch) (ch == ' ' || ch == '\t' || ch == '\n' || ch == '\r') 
+
 char peekChar(FILE* inf) {
   // pos contains the information needed from
     //   the stream's position indicator to restore
@@ -66,13 +68,6 @@ int readIdentifier(FILE *inf, char ch, char* indent) {
   indent[size] = '\0';
 
   return IDENTIFIER;
-}
-
-/*******************************************************
-* Return whether or not a given character is whitespace
-********************************************************/
-int isWhitespace(char ch) {
-  return ch == ' ' || ch == '\t' || ch == '\n' || ch == '\r';
 }
 
 /****************************************
@@ -174,6 +169,7 @@ struct lexics *nextLex(FILE *inf) {
     lexy->lexeme[1] = '\0';
     break;
   default:
+    
     if ((buf = malloc(sizeof(char) * LEXEME_MAX)) == NULL) {
       return NULL;
     }

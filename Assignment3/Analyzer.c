@@ -20,8 +20,11 @@ int main(){
 
 	struct lexics allLexics[1024];
 	int numberOfLexics = 0;
-	tokenizer(allLexics, &numberOfLexics, infile);
-	printf("Did parse: %d\n",parser(allLexics, numberOfLexics));
+	if (tokenizer(allLexics, &numberOfLexics, infile)) {
+		printf("Did parse: %d\n",parser(allLexics, numberOfLexics));
+	} else {
+		printf("%s", "Tokenization error");
+	}
 
 	fclose(infile);
 
