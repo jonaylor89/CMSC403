@@ -1,6 +1,4 @@
 #include "Analyzer.h"
-#include "Tokenizer.h"
-#include "Parser.h"
 
 int main(){
 	//initialize file pointer to NULL 
@@ -24,5 +22,7 @@ int main(){
 	int numberOfLexics = 0;
 	tokenizer(allLexics, &numberOfLexics, infile);
 	printf("Did parse: %d\n",parser(allLexics, numberOfLexics));
+
+	fclose(inf);
 
 }
