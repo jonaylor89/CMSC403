@@ -8,7 +8,7 @@ _Bool vaildNumber(char* aLexeme){
 }
 
 
-_Bool validIdentifier(char * aLexeme){
+_Bool validIdentifier(char* aLexeme){
 	regex_t identifierRegex;
 	regcomp(&identifierRegex, "^[a-zA-Z][a-zA-Z0-9]*$", REG_EXTENDED);
 	return !regexec(&identifierRegex, aLexeme, 0, 0, 0);
