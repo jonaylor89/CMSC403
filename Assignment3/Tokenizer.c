@@ -4,19 +4,19 @@
 #define ERROR 666 // My very own error token
 
 _Bool isDigit(char c) {
-
+  return TRUE;
 }
 
 _Bool isIdentifier(char c) {
-
+  return TRUE;
 }
 
 int readNumber() {
-
+  return 0;
 }
 
 int readIdentifier() {
-
+  return 0;
 }
 
 /****************************************
