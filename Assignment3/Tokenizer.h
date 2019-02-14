@@ -4,7 +4,7 @@
 
 #include <stdio.h>
 
-#include "Given.h"
+#include "Givens.h"
 
 _Bool tokenizer(struct lexics *aLex, int *numLex, FILE *inf);
 

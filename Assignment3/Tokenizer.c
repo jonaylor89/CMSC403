@@ -23,15 +23,15 @@ _Bool isDigit(char ch) {
 /*********************
 * Read in a number
 **********************/
-void readNumber(FILE inf, char ch, char* number) {
+int readNumber(FILE* inf, char ch, char* number) {
 
   int size = 1;
   number[0] = ch;
 
   while (isDigit(ch)) {
     readChar(ch, inf);
-    if ((number = realloc(sizeof(char) * size)) == NULL) {
-      return
+    if ((number = (char *)realloc(number, sizeof(char) * size)) == NULL) {
+      return 666;
     }
     number[size] = ch;
     size++;
@@ -43,15 +43,15 @@ void readNumber(FILE inf, char ch, char* number) {
 /**********************************
 * Read in an identifier 
 ***********************************/
-void readIdentifier(FILE inf, char ch, char* indent) {
+int readIdentifier(FILE *inf, char ch, char* indent) {
 
   int size = 1;
   indent[0] = '\0';
 
   while (isLetter(ch)) {
     readChar(ch, inf);
-    if ((indent = realloc(sizeof(char) * size)) == NULL) {
-      return
+    if ((indent = (char *)realloc(indent, sizeof(char) * size)) == NULL) {
+      return ERROR;
     }
     indent[size] = ch;
     size++;
@@ -70,12 +70,16 @@ int isWhitespace(char ch) {
 /****************************************
 * Return the next token in the buffer
 *****************************************/
-int nextLex(FILE inf) {
+struct lexics *nextLex(FILE *inf) {
 
   int tok;
   char ch;
   char* buf;
-  struct lexics lexy;
+  struct lexics *lexy; // Her name is lexy and she is beautiful
+
+  if ((lexy = malloc(sizeof(struct lexics))) == NULL) {
+    return NULL;
+  }
   
   // Read Character
   readChar(ch, inf);
@@ -89,47 +93,69 @@ int nextLex(FILE inf) {
 
   case '(':
     tok = LEFT_PARENTHESIS;
-    lexy = struct lexics{token: tok, lexeme: char[]{ch, '\0'}};
+    lexy->token = tok;
+    lexy->lexeme[0] = ch;
+    lexy->lexeme[1] = '\0';
     break;
   case ')':
     tok = RIGHT_PARENTHESIS;
-    lexy = struct lexics{token: tok, lexeme: char[]{ch, '\0'}};
+    lexy->token = tok;
+    lexy->lexeme[0] = ch;
+    lexy->lexeme[1] = '\0';
     break;
   case '{':
     tok = LEFT_BRACKET;
-    lexy = struct lexics{token: tok, lexeme: char[]{ch, '\0'}};
+    lexy->token = tok;
+    lexy->lexeme[0] = ch;
+    lexy->lexeme[1] = '\0';
     break;
   case '}':
     tok = RIGHT_BRACKET;
-    lexy = struct lexics{token: tok, lexeme: char[]{ch, '\0'}};
+    lexy->token = tok;
+    lexy->lexeme[0] = ch;
+    lexy->lexeme[1] = '\0';
     break;
   case '=':
     tok = EQUAL;
-    lexy = struct lexics{token: tok, lexeme: char[]{ch, '\0'}};
+    lexy->token = tok;
+    lexy->lexeme[0] = ch;
+    lexy->lexeme[1] = '\0';
     break;
   case ';':
     tok = EOL;
-    lexy = struct lexics{token: tok, lexeme: char[]{ch, '\0'}};
+    lexy->token = tok;
+    lexy->lexeme[0] = ch;
+    lexy->lexeme[1] = '\0';
     break;
   case ',':
     tok = COMMA;
-    lexy = struct lexics{token: tok, lexeme: char[]{ch, '\0'}};
+    lexy->token = tok;
+    lexy->lexeme[0] = ch;
+    lexy->lexeme[1] = '\0';
     break;
   case '*':
     tok = BINOP;
-    lexy = struct lexics{token: tok, lexeme: char[]{ch, '\0'}};
+    lexy->token = tok;
+    lexy->lexeme[0] = ch;
+    lexy->lexeme[1] = '\0';
     break;
   case '+':
     tok = BINOP;
-    lexy = struct lexics{token: tok, lexeme: char[]{ch, '\0'}};
+    lexy->token = tok;
+    lexy->lexeme[0] = ch;
+    lexy->lexeme[1] = '\0';
     break;
   case '-':
     tok = BINOP;
-    lexy = struct lexics{token: tok, lexeme: char[]{ch, '\0'}};
+    lexy->token = tok;
+    lexy->lexeme[0] = ch;
+    lexy->lexeme[1] = '\0';
     break;
   case '/':
     tok = BINOP;
-    lexy = struct lexics{token: tok, lexeme: char[]{ch, '\0'}};
+    lexy->token = tok;
+    lexy->lexeme[0] = ch;
+    lexy->lexeme[1] = '\0';
     break;
   default:
     if ((buf = malloc(sizeof(char) * 2)) == NULL) {
@@ -139,36 +165,40 @@ int nextLex(FILE inf) {
     if (isDigit(ch)) {
       tok = NUMBER;
       readNumber(inf, ch, buf);
-      lexy = struct lexics{token: tok, lexeme: buf};
+      lexy->token = tok;
+      strcpy(lexy->lexeme, buf);
     } else if (isLetter(ch)) {
       tok = readIdentifier(inf, ch, buf);
-      lexy = struct lexics{token: tok, lexeme: buf};
+      lexy->token = tok;
+      strcpy(lexy->lexeme, buf);;
     } else {
       tok = ERROR;
-      lexy = struct lexics{token: tok, lexeme: NULL};
+      lexy->token = tok;
+      lexy->lexeme[0] = '\0';
     }
 
   }
 
-  return lexy;
+  return &lexy;
 }
 
 /*************************************************************
 * Create token from file buffer and add them to lexics array
 **************************************************************/
-_Bool tokenizer(struct lexics *aLex, int *numLex, FILE inf) {
+_Bool tokenizer(struct lexics *aLex, int *numLex, FILE *inf) {
 
   int current = 0;
-  int lex;
+  struct lexics *lex;
 
   while ((lex = nextLex(inf)) != NULL) {
 
-    if (lex.token == ERROR) {
+    if (lex->token == ERROR) {
       return FALSE;
     }
 
     *numLex++;
-    aLex[current] = lex;
+    strcpy(aLex[current], *lex);
+    free(lex);
   } 
   
   return TRUE;

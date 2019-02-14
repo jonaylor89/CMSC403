@@ -2,7 +2,7 @@
 #ifndef PARSER_H
 #define PARSER_H
 
-#include "Given.h"
+#include "Givens.h"
 
 _Bool parser(struct lexics *someLexics, int numOfLexics);
 

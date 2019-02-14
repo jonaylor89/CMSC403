@@ -23,6 +23,6 @@ int main(){
 	tokenizer(allLexics, &numberOfLexics, infile);
 	printf("Did parse: %d\n",parser(allLexics, numberOfLexics));
 
-	fclose(inf);
+	fclose(infile);
 
 }
