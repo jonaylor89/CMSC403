@@ -6,19 +6,9 @@
                             return NULL; \
                           } 
 
-/************************************************
- * Return whether a given character is a Letter
- * ***********************************************/
-_Bool isLetter(char ch) {
-  return 'a' <= ch && ch <= 'z' || 'A' <= ch && ch <= 'Z' || ch == '_';
-}
+#define isLetter(ch) ('a' <= ch && ch <= 'z' || 'A' <= ch && ch <= 'Z' || ch == '_')
 
-/************************************************
- * Return whether a given character is a Digit
- * **********************************************/
-_Bool isDigit(char ch) {
-  return '0' <= ch && ch <= '9';
-}
+#define isDigit(ch)  ('0' <= ch && ch <= '9')
 
 /*********************
 * Read in a number
@@ -50,9 +40,6 @@ int readIdentifier(FILE *inf, char ch, char* indent) {
 
   while (isLetter(ch)) {
     readChar(ch, inf);
-    if ((indent = (char *)realloc(indent, sizeof(char) * size)) == NULL) {
-      return ERROR;
-    }
     indent[size] = ch;
     size++;
   }
@@ -158,7 +145,7 @@ struct lexics *nextLex(FILE *inf) {
     lexy->lexeme[1] = '\0';
     break;
   default:
-    if ((buf = malloc(sizeof(char) * 2)) == NULL) {
+    if ((buf = malloc(sizeof(char) * LEXEME_MAX)) == NULL) {
       return NULL;
     }
 
