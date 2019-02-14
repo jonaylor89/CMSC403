@@ -42,13 +42,16 @@ int readNumber(FILE* inf, char ch, char* number) {
   while (isDigit(ch)) {
     readChar(ch, inf);
     if ((number = (char *)realloc(number, sizeof(char) * size)) == NULL) {
-      return 666;
+      return ERROR;
     }
     number[size] = ch;
     size++;
   }
 
   number[size] = '\0';
+
+  return NUMBER;
+
 }
 
 /**********************************
@@ -175,8 +178,7 @@ struct lexics *nextLex(FILE *inf) {
     }
 
     if (isDigit(ch)) {
-      tok = NUMBER;
-      readNumber(inf, ch, buf);
+      tok = readNumber(inf, ch, buf);
       lexy->token = tok;
       strcpy(lexy->lexeme, buf);
     } else if (isLetter(ch)) {
