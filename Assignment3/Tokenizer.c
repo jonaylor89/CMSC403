@@ -2,13 +2,32 @@
 #include "Tokenizer.h"
 
 #define ERROR 666 // My very own error token
-#define readChar(ch, x); if ((ch = fgetc(x)) == NULL) { \
+#define readChar(ch, x); if ((ch = fgetc(x)) == EOF) { \
                             return NULL; \
                           } 
 
 #define isLetter(ch) ('a' <= ch && ch <= 'z' || 'A' <= ch && ch <= 'Z' || ch == '_')
 
 #define isDigit(ch)  ('0' <= ch && ch <= '9')
+
+char peekChar(FILE* inf) {
+  // pos contains the information needed from
+    //   the stream's position indicator to restore
+    //   the stream to its current position. 
+    fpos_t pos;
+    char ch; 
+    
+    // Get the current position
+    fgetpos(inf, &pos);
+
+    // Get the next char
+    readChar(ch, inf);
+
+    // Restore the position
+    fsetpos(inf, &pos);
+
+    return ch;
+}
 
 /*********************
 * Read in a number
@@ -45,6 +64,8 @@ int readIdentifier(FILE *inf, char ch, char* indent) {
   }
 
   indent[size] = '\0';
+
+  return IDENTIFIER;
 }
 
 /*******************************************************
@@ -105,8 +126,16 @@ struct lexics *nextLex(FILE *inf) {
   case '=':
     tok = EQUAL;
     lexy->token = tok;
-    lexy->lexeme[0] = ch;
-    lexy->lexeme[1] = '\0';
+
+    if (peekChar(inf) == '=') {
+      readChar(ch, inf);
+      lexy->lexeme[0] = ch;
+      lexy->lexeme[1] = ch;
+      lexy->lexeme[2] = '\0';
+    } else {
+      lexy->lexeme[0] = ch;
+      lexy->lexeme[1] = '\0';
+    }
     break;
   case ';':
     tok = EOL;
@@ -166,7 +195,7 @@ struct lexics *nextLex(FILE *inf) {
 
   }
 
-  return &lexy;
+  return lexy;
 }
 
 /*************************************************************
@@ -183,9 +212,8 @@ _Bool tokenizer(struct lexics *aLex, int *numLex, FILE *inf) {
       return FALSE;
     }
 
-    *numLex++;
-    strcpy(aLex[current], *lex);
-    free(lex);
+    (*numLex)++;
+    aLex[current] = *lex; // Reposibility of the parser to free the memory
   } 
   
   return TRUE;
