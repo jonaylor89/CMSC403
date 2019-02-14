@@ -209,7 +209,7 @@ _Bool tokenizer(struct lexics *aLex, int *numLex, FILE *inf) {
     }
 
     (*numLex)++;
-    aLex[current] = *lex; // Reposibility of the parser to free the memory
+    aLex[current] = *lex; // Resposibility of the parser to free the memory
   } 
   
   return TRUE;
