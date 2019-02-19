@@ -2,6 +2,15 @@
 #include "Parser.h"
 #include "Givens.h"
 
+void nextToken(struct lexics *cur, struct lexics *next, struct lexics *lexs) {
+  static int position = 1;
+
+  cur = next;
+  next = &lexs[position];
+
+  position++;
+}
+
 void parseFunction() {
   // function -> header body
   parseHeader();
@@ -63,6 +72,11 @@ void parseTerm() {
 _Bool parser(struct lexics *someLexics, int numOfLexics) {
 
   struct lexics curLex;
+  struct lexics peekLex;
+
+  // Load the parser with current and peek token
+  nextToken(&curLex, &peekLex, someLexics);
+  nextToken(&curLex, &peekLex, someLexics);
 
   for (int i = 0; i < LEXEME_MAX; i++) {
 
