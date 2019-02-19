@@ -22,6 +22,7 @@
 #define NUMBER 51
 
 #define EOP 999
+#define ERROR 666 
 
 #define LEXEME_MAX 256
 #define MY_CHAR_MAX 256

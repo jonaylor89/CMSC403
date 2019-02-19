@@ -1,7 +1,6 @@
 
 #include "Tokenizer.h"
 
-#define ERROR 666 // My very own error token
 #define readChar(ch, x); if ((ch = fgetc(x)) == EOF) { \
                             return NULL; \
                           } 

@@ -11,62 +11,60 @@ void nextToken(struct lexics *cur, struct lexics *next, struct lexics *lexs) {
   position++;
 }
 
-void parseFunction() {
+_Bool parseFunction() {
   // function -> header body
-  parseHeader();
-  parseBody();
+  return parseHeader() && parseBody();
 }
 
-void parseHeader() {
+_Bool parseHeader() {
   // header -> VARTYPE INDENT LEFT_PAR arg-decl RIGHT_PAR
 
+  return TRUE;
 }
 
-void parseArgDecl() {
+_Bool parseArgDecl() {
   // arg-decl -> VARYPE IDENT {COMMA VARTYPE INDENT}
-
+  return TRUE;
 }
 
-void parseBody() {
+_Bool parseBody() {
   // body -> LEFT_BAR Statement-list RIGHT_BRA
-
+  return TRUE;
 }
 
-void parseStatementList() {
+_Bool parseStatementList() {
   // statement-list -> statement {statement}
-
+  return TRUE;
 }
 
-void parseStatement() {
+_Bool parseStatement() {
   // statement -> while-loop | return | assignment | body
-
-
-
+  return TRUE;
 }
 
-void parseWhileLoop() {
+_Bool parseWhileLoop() {
   // while-loop -> WHILE_KEY LEFT_PAR expression RIGHT_PAR statement
-
+  return TRUE;
 }
 
-void parseReturn() {
+_Bool parseReturn() {
   // RETURN_KEY EXPRESSION EOL
-
+  return TRUE;
 }
 
-void parseAssignment() {
+_Bool parseAssignment() {
   // INDENT EQUAL expression EOL
-
+  return TRUE;
 }
 
-void parseExpression() {
+_Bool parseExpression() {
   // term {BINOP term} | LEFT_PAR expression RIGHT_PAR
-
+  return TRUE;
 }
 
-void parseTerm() {
+_Bool parseTerm() {
   // INDENT | NUMBER
-
+  return TRUE;
 }
 
 _Bool parser(struct lexics *someLexics, int numOfLexics) {
@@ -78,49 +76,15 @@ _Bool parser(struct lexics *someLexics, int numOfLexics) {
   nextToken(&curLex, &peekLex, someLexics);
   nextToken(&curLex, &peekLex, someLexics);
 
-  for (int i = 0; i < LEXEME_MAX; i++) {
+  while (curLex.token != EOP) {
 
-    curLex = someLexics[i];
-    
-    if (curLex.token != EOP) {
+    // printf("%s", curLex.lexeme);
 
-      // printf("%s", curLex.lexeme);
-
-      switch (curLex.token) {
-
-      case LEFT_PARENTHESIS:
-        break;
-      case RIGHT_PARENTHESIS:
-        break;
-      case LEFT_BRACKET:
-        break;
-      case RIGHT_BRACKET:
-        break;
-      case WHILE_KEYWORD:
-        break;
-      case RETURN_KEYWORD:
-        break;
-      case EQUAL:
-        break;
-      case COMMA:
-        break;
-      case EOL:
-        break;
-      case VARTYPE:
-        break;
-      case IDENTIFIER:
-        break;
-      case BINOP:
-        break;
-      case NUMBER:
-        break;
-      default:
-        break;
-
-      }
-    } else {
-      break;
+    if (parseFunction() == FALSE) {
+      return FALSE;
     }
+
+    nextToken(&curLex, &peekLex, someLexics);
   
   }
 
