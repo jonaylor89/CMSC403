@@ -21,6 +21,8 @@
 #define BINOP 22
 #define NUMBER 51
 
+#define EOP 999
+
 #define LEXEME_MAX 256
 #define MY_CHAR_MAX 256
 

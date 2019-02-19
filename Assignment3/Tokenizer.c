@@ -57,20 +57,29 @@ int readNumber(FILE* inf, char ch, char* number) {
 /**********************************
 * Read in an identifier 
 ***********************************/
-int readIdentifier(FILE *inf, char ch, char* indent) {
+int readIdentifier(FILE *inf, char ch, char* ident) {
 
   int size = 1;
-  indent[0] = '\0';
+  ident[0] = '\0';
 
   while (isLetter(ch)) {
     readChar(ch, inf);
-    indent[size] = ch;
+    ident[size] = ch;
     size++;
   }
 
-  indent[size] = '\0';
+  ident[size] = '\0';
 
-  return IDENTIFIER;
+  if (strcmp(ident, "while") == 0) {
+    return WHILE_KEYWORD;
+  } else if (strcmp(ident, "return") == 0) {
+    return RETURN_KEYWORD;
+  } else if (strcmp(ident, "int") == 0 || strcmp(ident, "void") == 0) {
+    return VARTYPE;
+  } else {
+    return IDENTIFIER;
+  }
+
 }
 
 /****************************************
@@ -83,7 +92,7 @@ struct lexics *nextLex(FILE *inf) {
   char* buf;
   struct lexics *lexy; // Her name is lexy and she is beautiful
 
-  if ((lexy = malloc(sizeof(struct lexics))) == NULL) {
+  if ((lexy = (struct lexics *) malloc(sizeof(struct lexics))) == NULL) {
     return NULL;
   }
   
@@ -159,21 +168,28 @@ struct lexics *nextLex(FILE *inf) {
     lexy->lexeme[0] = ch;
     lexy->lexeme[1] = '\0';
     break;
-  case '-':
+  case '%':
     tok = BINOP;
     lexy->token = tok;
     lexy->lexeme[0] = ch;
     lexy->lexeme[1] = '\0';
     break;
-  case '/':
-    tok = BINOP;
-    lexy->token = tok;
-    lexy->lexeme[0] = ch;
-    lexy->lexeme[1] = '\0';
+   case '!':
+    if (peekChar(inf) == '=') {
+      readChar(ch, inf);
+      lexy->token = BINOP;
+      lexy->lexeme[0] = ch;
+      lexy->lexeme[1] = '=';
+      lexy->lexeme[2] = '\0';
+    } else {
+      tok = ERROR;
+      lexy->lexeme[0] = ch;
+      lexy->lexeme[1] = '\0';
+    }
     break;
   default:
     
-    if ((buf = malloc(sizeof(char) * LEXEME_MAX)) == NULL) {
+    if ((buf = (char *) malloc(sizeof(char) * LEXEME_MAX)) == NULL) {
       return NULL;
     }
 
@@ -213,6 +229,12 @@ _Bool tokenizer(struct lexics *aLex, int *numLex, FILE *inf) {
     (*numLex)++;
     aLex[current] = *lex; // Resposibility of the parser to free the memory
   } 
+
+  lex->token = EOP;
+  lex->lexeme[0] = ' ';
+  lex->lexeme[1] = '\0';
+  (*numLex)++;
+  aLex[current] = *lex;
   
   return TRUE;
 }
