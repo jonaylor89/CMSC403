@@ -6,13 +6,12 @@
  * Helper function to move along the token buffer 
  **************************************************/
 void nextToken(struct lexics *curLex, struct lexics *peekLex, struct lexics *lexs) {
-  static int position = 1; 
+  static int position = 0; 
 
-  free(curLex->lexeme); // Free string in lexics
-  free(curLex); // Free token after use
+  printf("[DEBUG:NEXT_TOKEN] %d:  %d\n", position, curLex->token);
 
   curLex = peekLex;
-  peekLex = &lexs[position];
+  peekLex = &(lexs[position]);
 
   position++;
 }
@@ -250,7 +249,7 @@ _Bool parser(struct lexics *someLexics, int numOfLexics) {
 
   while (curLex.token != EOP) {
 
-    // printf("%s", curLex.lexeme);
+    printf("[DEBUG:PARSER] %s (%d)\n", curLex.lexeme, curLex.token);
 
     if (parseFunction(&curLex, &peekLex, someLexics) == FALSE) {
       return FALSE;

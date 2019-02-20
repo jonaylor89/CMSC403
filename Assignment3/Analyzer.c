@@ -19,15 +19,15 @@ int main(){
 
 
 	struct lexics allLexics[1024];
+
+    memset(allLexics, 0, sizeof(struct lexics) * 1024);
+
 	int numberOfLexics = 0;
 	if (tokenizer(allLexics, &numberOfLexics, infile)) {
-		printf("%s", "Made it here\n");
 		printf("Did parse: %d\n", parser(allLexics, numberOfLexics));
 	} else {
 		printf("%s", "Tokenization error");
 	}
-
-
 
 	fclose(infile);
 

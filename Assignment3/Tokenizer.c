@@ -1,9 +1,7 @@
 
 #include "Tokenizer.h"
 
-#define readChar(ch, x); if ((ch = fgetc(x)) == EOF) { \
-                            return NULL; \
-                          } 
+#define readChar(ch, x); (ch = fgetc(x)) 
 
 #define isLetter(ch) ('a' <= ch && ch <= 'z' || 'A' <= ch && ch <= 'Z' || ch == '_')
 
@@ -38,7 +36,7 @@ int readNumber(FILE* inf, char ch, char* number) {
   int size = 1;
   number[0] = ch;
 
-  while (isDigit(ch)) {
+  while (isDigit(peekChar(inf))) {
     readChar(ch, inf);
     if ((number = (char *)realloc(number, sizeof(char) * size)) == NULL) {
       return ERROR;
@@ -59,14 +57,14 @@ int readNumber(FILE* inf, char ch, char* number) {
 int readIdentifier(FILE *inf, char ch, char* ident) {
 
   int size = 1;
-  ident[0] = '\0';
+  ident[0] = ch;
 
-  while (isLetter(ch)) {
+  while (isLetter(peekChar(inf))) {
     readChar(ch, inf);
     ident[size] = ch;
     size++;
   }
-
+  
   ident[size] = '\0';
 
   if (strcmp(ident, "while") == 0) {
@@ -90,19 +88,32 @@ struct lexics *nextLex(FILE *inf) {
   char ch;
   char* buf;
   struct lexics *lexy; // Her name is lexy and she is beautiful
-
-  if ((lexy = (struct lexics *) malloc(sizeof(struct lexics))) == NULL) {
-    return NULL;
-  }
   
+
   // Read Character
   readChar(ch, inf);
+
+  if (feof(inf)) {
+    return NULL; 
+  }
 
   // Exhaust whitespace
   while (isWhitespace(ch)) {
     readChar(ch, inf);
+    
+    if (feof(inf)) {
+        return NULL; 
+    }
   }
 
+  if ((lexy = (struct lexics *) malloc(sizeof(struct lexics))) == NULL) {
+    tok = ERROR;
+    lexy->token = tok;
+    lexy->lexeme[0] = ch;
+    lexy->lexeme[1] = '\0';
+    return lexy;
+  }
+  
   switch(ch) {
 
   case '(':
@@ -216,7 +227,7 @@ struct lexics *nextLex(FILE *inf) {
 **************************************************************/
 _Bool tokenizer(struct lexics *aLex, int *numLex, FILE *inf) {
 
-  int current = 0;
+  (*numLex) = 0;
   struct lexics *lex;
 
   while ((lex = nextLex(inf)) != NULL) {
@@ -225,16 +236,33 @@ _Bool tokenizer(struct lexics *aLex, int *numLex, FILE *inf) {
       return FALSE;
     }
 
+    aLex[(*numLex)] = *lex; // Resposibility of the parser to free the memory
     (*numLex)++;
-    aLex[current] = *lex; // Resposibility of the parser to free the memory
   } 
 
-  lex->token = EOP;
-  lex->lexeme[0] = ' ';
-  lex->lexeme[1] = '\0';
-  (*numLex)++;
-  aLex[current] = *lex;
+  struct lexics *lexy;
+  if ((lexy = (struct lexics *) malloc(sizeof(struct lexics))) == NULL) {
+    lexy->token = EOP;
+    lexy->lexeme[0] = ' ';
+    lexy->lexeme[1] = '\0';
+  }
   
+  aLex[(*numLex)] = *lexy;
+
+  /*
+  int i;
+  for (i = 0; i < *numLex; i++) {
+    printf("[DEBUG] %d\n", aLex[i].token);
+  }
+  */
+
   return TRUE;
 }
+
+
+
+
+
+
+
 
