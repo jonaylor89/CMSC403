@@ -26,6 +26,8 @@ int main(){
 		printf("%s", "Tokenization error");
 	}
 
+	
+
 	fclose(infile);
 
 }
