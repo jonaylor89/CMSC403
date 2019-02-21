@@ -8,10 +8,10 @@
 void nextToken(struct lexics *curLex, struct lexics *peekLex, struct lexics *lexs) {
   static int position = 0; 
 
-  printf("[DEBUG:NEXT_TOKEN] %d:  %d\n", position, curLex->token);
+  *curLex = (lexs[position]);
+  *peekLex = (lexs[position+1]);
 
-  curLex = peekLex;
-  peekLex = &(lexs[position]);
+  // printf("[DEBUG] %d, %d\n", curLex->token, peekLex->token);
 
   position++;
 }
@@ -21,6 +21,7 @@ void nextToken(struct lexics *curLex, struct lexics *peekLex, struct lexics *lex
  ***********************************************************************/
 _Bool compareToken(struct lexics *curLex, struct lexics *peekLex , struct lexics *lexs, int expectedToken) {
 
+  // printf("[DEBUG] %d == %d\n", curLex->token, expectedToken);
   _Bool equal = curLex->token == expectedToken;
   nextToken(curLex, peekLex, lexs); // consume token
 
@@ -36,7 +37,7 @@ _Bool parseFunction(struct lexics *curLex, struct lexics *peekLex, struct lexics
   _Bool first = parseHeader(curLex, peekLex, lexs);
 
   // Body
-  _Bool second = parseHeader(curLex, peekLex, lexs);
+  _Bool second = parseBody(curLex, peekLex, lexs);
 
   // Function parsed properly if each piece does
   return first && second;
@@ -46,7 +47,6 @@ _Bool parseFunction(struct lexics *curLex, struct lexics *peekLex, struct lexics
  * header -> VARTYPE IDENT LEFT_PAR arg-decl RIGHT_PAR
  *******************************************************/
 _Bool parseHeader(struct lexics *curLex, struct lexics *peekLex, struct lexics *lexs) {
-  
 
   // VARTYPE
   _Bool first = compareToken(curLex, peekLex, lexs, VARTYPE);
@@ -57,8 +57,11 @@ _Bool parseHeader(struct lexics *curLex, struct lexics *peekLex, struct lexics *
   // LEFT_PAR
   _Bool third = compareToken(curLex, peekLex, lexs, LEFT_PARENTHESIS);
 
-  // arg-decl
-  _Bool fourth = parseArgDecl(curLex, peekLex, lexs);
+  _Bool fourth = TRUE;
+  if (curLex->token == VARTYPE) {
+    // arg-decl
+    fourth = fourth && parseArgDecl(curLex, peekLex, lexs);
+  }
 
   // RIGHT_PAR
   _Bool fifth = compareToken(curLex, peekLex, lexs, RIGHT_PARENTHESIS);
@@ -91,6 +94,7 @@ _Bool parseArgDecl(struct lexics *curLex, struct lexics *peekLex, struct lexics 
     third = third && compareToken(curLex, peekLex, lexs, IDENTIFIER);
   }
 
+  // printf("[DEBUG:ARGDECL] %d, %d, %d, (%d)\n", first, second, third, curLex->token);
   return first && second && third;
 }
 
@@ -102,8 +106,12 @@ _Bool parseBody(struct lexics *curLex, struct lexics *peekLex, struct lexics *le
   // LEFT_BRA
   _Bool first = compareToken(curLex, peekLex, lexs, LEFT_BRACKET);
 
-  // statement-list
-  _Bool second = parseStatementList(curLex, peekLex, lexs);
+  _Bool second = TRUE;
+    
+  if (curLex->token == WHILE_KEYWORD || curLex->token == RETURN_KEYWORD || curLex->token == IDENTIFIER) {
+        // statement-list
+        second = second && parseStatementList(curLex, peekLex, lexs);
+  }
   
   // RIHT_BRA
   _Bool third = compareToken(curLex, peekLex, lexs, RIGHT_BRACKET);
@@ -122,10 +130,10 @@ _Bool parseStatementList(struct lexics *curLex, struct lexics *peekLex, struct l
 
     first = first && parseStatement(curLex, peekLex, lexs);
 
-  } while (curLex->token == WHILE_KEYWORD ||
+  } while ((curLex->token == WHILE_KEYWORD ||
             curLex->token == RETURN_KEYWORD ||
             curLex->token == IDENTIFIER ||
-            curLex->token == LEFT_BRACKET);
+            curLex->token == LEFT_BRACKET) && first);
 
   return first;
 }
@@ -146,7 +154,7 @@ _Bool parseStatement(struct lexics *curLex, struct lexics *peekLex, struct lexic
     first = parseReturn(curLex, peekLex, lexs);
     break;
   case IDENTIFIER:
-    first = parseStatement(curLex, peekLex, lexs);
+    first = parseAssignment(curLex, peekLex, lexs);
     break;
   case LEFT_BRACKET:
     first = parseBody(curLex, peekLex, lexs);
@@ -168,16 +176,20 @@ _Bool parseWhileLoop(struct lexics *curLex, struct lexics *peekLex, struct lexic
   _Bool first = compareToken(curLex, peekLex, lexs, WHILE_KEYWORD);
 
   // LEFT_PAR
-  _Bool second = compareToken(curLex, peekLex, lexs, LEFT_PARENTHESIS);
+  _Bool second = TRUE;
+  second = compareToken(curLex, peekLex, lexs, LEFT_PARENTHESIS);
 
   // expression
   _Bool third = parseExpression(curLex, peekLex, lexs);
 
   // RIGHT_PAR
-  _Bool fourth = compareToken(curLex, peekLex, lexs, RIGHT_PARENTHESIS);
+  _Bool fourth = TRUE;
+  fourth = compareToken(curLex, peekLex, lexs, RIGHT_PARENTHESIS);
 
   // statement
   _Bool fifth = parseStatement(curLex, peekLex, lexs);
+
+  // printf("[DEBUG:WHILE] %d, %d, %d, %d, %d\n", first, second, third, fourth, fifth);
 
   return first && second && third && fourth && fifth;
 }
@@ -224,7 +236,29 @@ _Bool parseAssignment(struct lexics *curLex, struct lexics *peekLex, struct lexi
  * expression -> term {BINOP term} | LEFT_PAR expression RIGHT_PAR 
  *******************************************************************/
 _Bool parseExpression(struct lexics *curLex, struct lexics *peekLex, struct lexics *lexs) {
-  return TRUE;
+
+    _Bool first = TRUE;
+    _Bool second = TRUE;
+    _Bool third = TRUE;
+
+    if (curLex->token == LEFT_PARENTHESIS) {
+        nextToken(curLex, peekLex, lexs);
+
+        second = second && parseExpression(curLex, peekLex, lexs);
+
+        third = third && compareToken(curLex, peekLex, lexs, RIGHT_PARENTHESIS);
+    
+    } else {
+        first = first && parseTerm(curLex, peekLex, lexs);
+
+        while (curLex->token == BINOP) {
+            nextToken(curLex, peekLex, lexs);
+            second = second && parseTerm(curLex, peekLex, lexs);
+        }
+    }
+
+  // printf("[DEBUG:EXPRESSION] %d, %d, %d, cur: %d\n", first, second, third, curLex->token);
+  return first && second && third;
 }
 
 /**************************
@@ -233,6 +267,7 @@ _Bool parseExpression(struct lexics *curLex, struct lexics *peekLex, struct lexi
 _Bool parseTerm(struct lexics *curLex, struct lexics *peekLex, struct lexics *lexs) {
 
   _Bool ret = curLex->token == IDENTIFIER || curLex->token == NUMBER;
+  // printf("[DEBUG:TERM] %d\n", curLex->token);
   nextToken(curLex, peekLex, lexs);
 
   return ret;
@@ -243,21 +278,8 @@ _Bool parser(struct lexics *someLexics, int numOfLexics) {
   struct lexics curLex;
   struct lexics peekLex;
 
-  // Load the parser with current and peek token
+  // Load the parser
   nextToken(&curLex, &peekLex, someLexics);
-  nextToken(&curLex, &peekLex, someLexics);
 
-  while (curLex.token != EOP) {
-
-    printf("[DEBUG:PARSER] %s (%d)\n", curLex.lexeme, curLex.token);
-
-    if (parseFunction(&curLex, &peekLex, someLexics) == FALSE) {
-      return FALSE;
-    }
-
-    nextToken(&curLex, &peekLex, someLexics);
-  
-  }
-
-  return TRUE; // Everything parsed correctly
+  return parseFunction(&curLex, &peekLex, someLexics); // Everything parsed correctly
 }

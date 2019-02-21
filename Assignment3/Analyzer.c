@@ -31,4 +31,6 @@ int main(){
 
 	fclose(infile);
 
+    return 0;
+
 }

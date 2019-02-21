@@ -59,7 +59,7 @@ int readIdentifier(FILE *inf, char ch, char* ident) {
   int size = 1;
   ident[0] = ch;
 
-  while (isLetter(peekChar(inf))) {
+  while (isLetter(peekChar(inf)) || isDigit(peekChar(inf))) {
     readChar(ch, inf);
     ident[size] = ch;
     size++;
@@ -141,18 +141,19 @@ struct lexics *nextLex(FILE *inf) {
     lexy->lexeme[1] = '\0';
     break;
   case '=':
-    tok = EQUAL;
-    lexy->token = tok;
 
     if (peekChar(inf) == '=') {
+      tok = BINOP;
       readChar(ch, inf);
       lexy->lexeme[0] = ch;
       lexy->lexeme[1] = ch;
       lexy->lexeme[2] = '\0';
     } else {
+      tok = EQUAL;
       lexy->lexeme[0] = ch;
       lexy->lexeme[1] = '\0';
     }
+    lexy->token = tok;
     break;
   case ';':
     tok = EOL;
