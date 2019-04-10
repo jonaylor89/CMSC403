@@ -40,7 +40,7 @@
     ) 
 
     (
-      (not (inList (first l2) l1))
+      (not (member (first l2) l1))
       (append (union- l1 (rest l2)) (first l2))
     )
 
@@ -106,7 +106,7 @@
  "Branching macro" 
   (cond
     ((x > y) (first toExecute))
-    ((x < y) (second toExcute))
+    ((x < y) (second toExecute))
     (T (last toExecute))
   )
 )
