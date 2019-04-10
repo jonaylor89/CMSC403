@@ -27,25 +27,37 @@
     )
   )
 
-  (nextYear () 1800)
+  (nextYear '() 1800)
 )
 
-; 3
+; 3)
 (defun union- (l1 l2)
   "Return the union of two lists" 
+  (cond 
+    (
+      (not l2)
+      l1
+    ) 
 
+    (
+      (not (inList (first l2) l1))
+      (append (union- l1 (rest l2)) (first l2))
+    )
+
+    (
+      T 
+      (union_ l1 (rest l2))
+    )
+  )
 )
 
-; 4
+; 4)
 (defun avg (aList)
   "Return average of a list using tail recursion"
-  (if (= aList NIL) NIL
+  (if (not aList) NIL
     (defun avgHelper (partialList accum size)
-      (if (= partialList NIL) NIL
-        (progn 
-          (+ accum (car partialList))
-          ()
-        )
+      (if (= partialList NIL) (/ accum size)
+        (avgHelper (+ accum (cdr partialList)) (+ size 1))
       )
     )
 
@@ -68,17 +80,33 @@
   ) 
 )
 
-; 7
+; 7)
 (defun clean (aFunc aList)
-  "Clean list using function"
-  (map aList (lambda (x) )
-   
-  ) 
+  "Clean list using function (filter)"
 
+  (cond
+    (
+      (not aList) 
+      NIL
+    ) 
+    (
+      (funcall aFunc (first aList))
+      (cons (first aList) (clean aFunc (rest aList)))
+    )
+
+    (
+      T 
+      (clean aFunc (rest aList))
+    )
+  )  
 )
 
-; 8
+; 8)
 (defmacro threeWayBranch (x y toExecute)
  "Branching macro" 
- 
+  (cond
+    ((x > y) (first toExecute))
+    ((x < y) (second toExcute))
+    (T (last toExecute))
+  )
 )
