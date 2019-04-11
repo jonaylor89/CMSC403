@@ -12,7 +12,7 @@
   (defun nextYear (yearList year)
     (cond 
      
-      ((= year 2018) (yearList))
+      ((> year 2018) yearList)
 
       ((and (= (mod year 100) 0) (= (mod year 400) 0))
         (nextYear yearList (+ year 4))
@@ -46,7 +46,7 @@
 
     (
       T 
-      (union_ l1 (rest l2))
+      (union- l1 (rest l2))
     )
   )
 )
@@ -54,29 +54,51 @@
 ; 4)
 (defun avg (aList)
   "Return average of a list using tail recursion"
-  (if (not aList) NIL
-    (defun avgHelper (partialList accum size)
-      (if (= partialList NIL) (/ accum size)
-        (avgHelper (+ accum (cdr partialList)) (+ size 1))
+  (cond 
+    (
+      (not aList) 
+      NIL
+    )
+    (
+      T
+      (progn
+        (defun avgHelper (partialList accum size)
+          (cond 
+            (
+              (not partialList) 
+              (/ accum size)
+            )
+            (
+              T
+              (avgHelper (rest partialList) (+ accum (cdr partialList)) (+ size 1))
+            )
+          )
+        )
+
+        (avgHelper aList 0 0)
       )
     )
-
-    (avgHelper aList 0 0)
   )
 )
 
 ; 5.)
 (defun isType (dataType) 
   "Return anonymous function checking if a value is the dataType"
-  #'(lambda (x) (= dataType (type-of x)))
+  #'(lambda (x) (typep x dataType ))
 )
 
 ; 6.)
 (defun taxCalculator (limit rate values)
   "Find taxes"
-  (map values (lambda (x) 
-                (if (> x limit) (* x rate))
+  (mapcar #'(lambda (x) 
+                (cond 
+                  (
+                    (> x limit) 
+                    (* x rate)
+                  )
+                )
               )
+          values
   ) 
 )
 
@@ -105,8 +127,8 @@
 (defmacro threeWayBranch (x y toExecute)
  "Branching macro" 
   (cond
-    ((x > y) (first toExecute))
-    ((x < y) (second toExecute))
+    ((> x y) (first toExecute))
+    ((< x y) (second toExecute))
     (T (last toExecute))
   )
 )
