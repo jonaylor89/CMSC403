@@ -12,17 +12,19 @@
   (defun nextYear (yearList year)
     (cond 
      
-      ((> year 2018) yearList)
+      (
+        (> year 2018) 
+        yearList
+      )
 
-      ((and (= (mod year 100) 0) (= (mod year 400) 0))
+      (
+        (and (= (mod year 100) 0) (/= (mod year 400) 0))
         (nextYear yearList (+ year 4))
       )
 
-      (T 
-        (progn 
-          (append yearList year)
-          (nextYear yearList (+ year 4))
-        )
+      (
+        T 
+        (nextYear (nconc yearList (list year)) (+ year 4))
       )
     )
   )
@@ -41,7 +43,7 @@
 
     (
       (not (member (first l2) l1))
-      (append (union- l1 (rest l2)) (first l2))
+      (append (union- l1 (rest l2)) (list (first l2)))
     )
 
     (
@@ -63,14 +65,14 @@
       T
       (progn
         (defun avgHelper (partialList accum size)
-          (cond 
+          (cond
             (
               (not partialList) 
               (/ accum size)
             )
             (
               T
-              (avgHelper (rest partialList) (+ accum (cdr partialList)) (+ size 1))
+              (avgHelper (rest partialList) (+ accum (first partialList)) (+ size 1))
             )
           )
         )
