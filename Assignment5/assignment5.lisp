@@ -10,30 +10,33 @@
 ; 2.)
 (defun leapYear ()
   "Return the leap years between 1800 to 2018"    
+  (labels  ; labels for recursive closures
+    (
+      (
+        nextYear 
+        (yearList year end)
+        (cond 
+          ( ; If the year is greater than the end then return the complete list
+            (> year end) 
+            yearList
+          )
 
-  (defun nextYear (yearList year end)
-   "Appends the next leap year to yearList until 2018"
+          ( ; Else if it fits this special case than add for and keep going recursively
+            (and (= (mod year 100) 0) (/= (mod year 400) 0))
+            (nextYear yearList (+ year 4) 2018)
+          )
 
-    (cond 
-      ( ; If the year is greater than the end then return the complete list
-        (> year end) 
-        yearList
-      )
-
-      ( ; Else if it fits this special case than add for and keep going recursively
-        (and (= (mod year 100) 0) (/= (mod year 400) 0))
-        (nextYear yearList (+ year 4) 2018)
-      )
-
-      ( ; By default, add the year to the yearList, add 4, and recursively move on
-        T 
-        (nextYear (nconc yearList (list year)) (+ year 4) 2018)
+          ( ; By default, add the year to the yearList, add 4, and recursively move on
+            T 
+            (nextYear (nconc yearList (list year)) (+ year 4) 2018)
+          )
+        )
       )
     )
-  )
 
-  ; Start the recursion with an empty list and the start year
-  (nextYear '() 1800 2018)
+    ; Start the recursion with an empty list and the start year
+    (nextYear '() 1800 2018)
+  )
 )
 
 ; 3)
@@ -149,32 +152,38 @@
  "Branching macro" 
 
   ; Helper function to execute a list of statements
-  (defun executeList (aList)
+  (labels
+    (
+      (
+        executeList 
+        (aList)
+        (cond
+          ( ; If the list is empty, return NIL
+            (not aList) 
+            NIL
+          )
+
+          ( ; Else evaluate the first element in the list pass on the rest
+            T 
+            (progn
+              (eval (first aList)) ; Eval first element
+              (executeList (rest aList)) ; Pass on the rest
+            )
+          )
+        )  
+      )
+    )
+
     (cond
-      ( ; If the list is empty, return NIL
-        (not aList) 
-        NIL
-      )
+      ; If x < y execute the first sublist of statements
+      ((< x y) (executeList (first toExecute)))
 
-      ( ; Else evaluate the first element in the list pass on the rest
-        T 
-        (progn
-          (eval (first aList)) ; Eval first element
-          (executeList (rest aList)) ; Pass on the rest
-        )
-      )
-    )  
-  )
+      ; Else if x > y execute the second sublist of statements
+      ((> x y) (executeList (second toExecute)))
 
-  (cond
-    ; If x < y execute the first sublist of statements
-    ((< x y) (executeList (first toExecute)))
-
-    ; Else if x > y execute the second sublist of statements
-    ((> x y) (executeList (second toExecute)))
-
-    ; Else execute the third sublist of statements
-    (T (executeList (third toExecute)))
+      ; Else execute the third sublist of statements
+      (T (executeList (third toExecute)))
+    )
   )
 )
 
