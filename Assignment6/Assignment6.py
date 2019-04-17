@@ -2,13 +2,16 @@
 
 import sys
 import tkinter
-from tkinter import Canvas
+from tkinter import Tk, Canvas
 
 
 class CustomCanvas(object):
     def __init__(self, height, width):
-        pass
+        master = Tk()
+        self.canvas = Canvas(master, width=width, height=height)
+        self.canvas.pack()
 
+        master.mainloop()
 
 class Rectangle(object):
     def __init__(self, height, width, x, y):
