@@ -5,14 +5,17 @@ import tkinter
 from tkinter import Canvas
 
 
-class CustomCanvas(Canvas):
+class CustomCanvas(object):
     def __init__(self, height, width):
         pass
 
 
 class Rectangle(object):
     def __init__(self, height, width, x, y):
-        pass
+        self.height = height
+        self.width = width
+        self.x = x
+        self.y = y
 
 
 def pack(allRect, canvasSize):
