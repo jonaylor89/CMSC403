@@ -15,7 +15,7 @@ class CustomCanvas(object):
         self.canvas.pack()
 
 
-    def show(self, all_rects):
+    def draw(self, all_rects):
         for rect in all_rects:
             self.rects.append(
                 self.canvas.create_rectangle(
@@ -62,7 +62,7 @@ def main():
     pack(packing_rects, canvas_size)
     c = CustomCanvas(*canvas_size)
 
-    c.show(packing_rects)
+    c.draw(packing_rects)
 
 
 if __name__ == "__main__":
