@@ -14,7 +14,6 @@ class CustomCanvas(object):
         self.canvas = Canvas(self.master, width=width, height=height)
         self.canvas.pack()
 
-
     def draw(self, all_rects):
         for rect in all_rects:
             self.rects.append(
@@ -30,6 +29,7 @@ class CustomCanvas(object):
 
         self.master.mainloop()
 
+
 class Rectangle(object):
     def __init__(self, height, width, x, y):
         self.height: int = int(height)
@@ -40,9 +40,19 @@ class Rectangle(object):
     def __eq__(self, other):
         return self.height == other.height and self.width == other.width
 
+    def __str__(self):
+        return f"Rectangle with width of {self.width} and height of {self.height})"
+
+    def __repr__(self):
+        return f"<Rectangle(width={self.width}, height={self.height})>"
+
+    def area(self):
+        return self.width * self.height
+
 
 def pack(allRect, canvasSize):
-    pass
+    rects = sorted(allRect, key=lambda x: x.area)
+
 
 
 def main():
@@ -56,8 +66,8 @@ def main():
     packing_parameters = []
 
     with open(file_path) as f:
-        canvas_size = tuple(f.readline().split(","))
-        packing_rects = [Rectangle(*line.split(","), 0, 0) for line in f]
+        canvas_size = tuple(f.readline().strip().split(","))
+        packing_rects = [Rectangle(*line.strip().split(","), 0, 0) for line in f]
 
     pack(packing_rects, canvas_size)
     c = CustomCanvas(*canvas_size)
