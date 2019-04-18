@@ -8,29 +8,34 @@ from tkinter import Tk, Canvas
 class CustomCanvas(object):
     def __init__(self, height, width):
 
-        self.rects = []
+        self.rects: List[Rectangle] = []
 
-        master = Tk()
-        self.canvas = Canvas(master, width=width, height=height)
+        self.master = Tk()
+        self.canvas = Canvas(self.master, width=width, height=height)
         self.canvas.pack()
 
-        master.mainloop()
 
     def show(self, all_rects):
         for rect in all_rects:
             self.rects.append(
                 self.canvas.create_rectangle(
-                    rect.x, rect.y, rect.x + rect.width, rect.y + rect.height
+                    rect.x,
+                    rect.y,
+                    rect.x + rect.width,
+                    rect.y + rect.height,
+                    outline="black",
+                    fill="white",
                 )
             )
 
+        self.master.mainloop()
 
 class Rectangle(object):
     def __init__(self, height, width, x, y):
-        self.height = height
-        self.width = width
-        self.x = x
-        self.y = y
+        self.height: int = int(height)
+        self.width: int = int(width)
+        self.x: int = int(x)
+        self.y: int = int(y)
 
     def __eq__(self, other):
         return self.height == other.height and self.width == other.width
@@ -41,18 +46,23 @@ def pack(allRect, canvasSize):
 
 
 def main():
-    file_path = sys.argv[1]
+    if len(sys.argv) > 1:
+        file_path = sys.argv[1]
+    else:
+        exit(1)
 
     height = 0
     width = 0
     packing_parameters = []
 
     with open(file_path) as f:
-        canvas_size = tuple(f[:2])
-        packing_rects = [Rectangle(*line.split(",")) for line in f[2:]]
+        canvas_size = tuple(f.readline().split(","))
+        packing_rects = [Rectangle(*line.split(","), 0, 0) for line in f]
 
     pack(packing_rects, canvas_size)
     c = CustomCanvas(*canvas_size)
+
+    c.show(packing_rects)
 
 
 if __name__ == "__main__":
