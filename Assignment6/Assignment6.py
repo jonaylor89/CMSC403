@@ -6,6 +6,7 @@ from tkinter import Tk, Canvas
 
 import rpack
 
+
 class CustomCanvas(object):
     def __init__(self, height, width):
 
@@ -53,9 +54,10 @@ class Rectangle(object):
 
 def pack(allRect, canvasSize):
     rects = [(rect.width, rect.height) for rect in allRect]
+
     positions = rpack.pack(rects)
 
-    for position, rect in zip(positions, rects):
+    for position, rect in zip(positions, allRect):
         rect.x = position[0]
         rect.y = position[1]
 
