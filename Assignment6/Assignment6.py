@@ -40,7 +40,8 @@ class Rectangle(object):
         self.y: int = int(y)
 
     def __eq__(self, other):
-        return self.height == other.height and self.width == other.width
+        return (self.height == other.height and self.width == other.width) or
+                (self.height == other.width and self.width == other.height)
 
     def __str__(self):
         return f"Rectangle with width of {self.width} and height of {self.height})"
