@@ -62,6 +62,12 @@ public class RaceTrack extends JPanel {
     // Draw 3 rectangles for the "track"
     // Draw the images at the beginning of the track
     g.drawImage(car, 0, 0, this);
+    g.drawImage(car, 0, 50, this);
+    g.drawImage(car, 0, 100, this);
+
+    g.drawRect(10, 10, 10, 10);
+    g.drawRect(20, 20, 20, 20);
+    g.drawRect(30, 30, 30, 30);
 
   }
 
