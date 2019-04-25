@@ -68,6 +68,8 @@ public class RaceTrack extends JPanel {
     g.drawRect(10, 10, 10, 10);
     g.drawRect(20, 20, 20, 20);
     g.drawRect(30, 30, 30, 30);
+    g.setColor(Color.RED);
+    g.fillRect(10, 10, 10, 10);
 
   }
 
