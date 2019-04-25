@@ -1,18 +1,24 @@
 
 import java.awt.*;
 import java.awt.event.*;
+import java.awt.image.*;
 import javax.swing.*;
+import javax.imageio.*;
+
+import java.io.*;
 
 public class RaceTrack extends JPanel {
 
-  private JFrame frame;
-  private JButton startButton;
-  private JButton pauseButton;
-  private JButton resetButton;
+  private static JFrame frame;
+  private static JButton startButton;
+  private static JButton pauseButton;
+  private static JButton resetButton;
+  private static BufferedImage car;
 
   public static void main(String argv[]) {
-    frame = new JFrame("Assignment 7");
+    frame = new JFrame("Race Track");
     frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+    frame.setResizable(false);
 
     RaceTrack track = new RaceTrack();
     frame.add(track);
@@ -35,6 +41,15 @@ public class RaceTrack extends JPanel {
     });
     frame.getContentPane().add(resetButton);
 
+    frame.setLayout(new FlowLayout());
+
+    try {
+      car = ImageIO.read(new File("sportive-car.png"));
+    } catch (IOException ex) {
+      System.out.println("IO error");
+      System.exit(1);
+    }
+
     frame.setSize(500, 200);
     frame.setVisible(true);
 
@@ -44,7 +59,9 @@ public class RaceTrack extends JPanel {
   public void paintComponent(Graphics g) {
     super.paintComponent(g);
 
-
+    // Draw 3 rectangles for the "track"
+    // Draw the images at the beginning of the track
+    g.drawImage(car, 0, 0, this);
 
   }
 
