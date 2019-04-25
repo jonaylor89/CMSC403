@@ -1,7 +1,5 @@
 
-import FoodBank;
-import FoodProducer;
-import FoodConsumer;
+// package FoodBank;
 
 public class FoodBankPatrons {
   

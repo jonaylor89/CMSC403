@@ -1,9 +1,14 @@
 
-import FoodBank;
+// package FoodBank;
+
+import java.util.Random;
+import java.util.concurrent.locks.ReentrantLock;
 
 public class FoodProducer extends Thread {
   
-  FoodBank bank;
+  private FoodBank bank;
+  private Random rand = new Random();
+  private ReentrantLock lock = new ReentrantLock();
 
   public FoodProducer(FoodBank bank) {
     this.bank = bank; 
@@ -13,11 +18,19 @@ public class FoodProducer extends Thread {
     int amount;
     while (true) {
 
-      amount = random.random();
+      amount = rand.nextInt(100) + 1;
 
+      System.out.println("Waiting to get food");
+      lock.lock();
+      System.out.printf("Giving %d items of food, the balance is now %d items\n", amount, bank.food);
       bank.giveFood(amount);
+      lock.unlock();
 
-      Thread.sleep(100);
+      try {
+        Thread.sleep(100);
+      } catch(InterruptedException e) {
+        e.printStackTrace();
+      }
     }
   }
 

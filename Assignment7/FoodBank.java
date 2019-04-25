@@ -1,4 +1,6 @@
 
+// package FoodBank;
+
 public class FoodBank {
   
   int food;
@@ -7,11 +9,11 @@ public class FoodBank {
     food = 0; 
   }
 
-  public int takeFood(int amount) {
+  public void takeFood(int amount) {
     food -= amount; 
   }
 
-  public int giveFood(int amount) {
+  public void giveFood(int amount) {
     food += amount; 
   }
 }
