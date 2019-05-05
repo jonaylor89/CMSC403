@@ -63,6 +63,8 @@ public class RaceTrack extends JPanel {
 
     try {
       car = ImageIO.read(new File("sportive-car.png"));
+      JLabel label = new JLabel(new ImageIcon(car));
+      frame.add(label);
     } catch (IOException ex) {
       System.out.println("IO error");
       System.exit(1);
