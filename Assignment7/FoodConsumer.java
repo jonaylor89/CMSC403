@@ -22,8 +22,10 @@ public class FoodConsumer extends Thread {
 
       System.out.println("Waiting to take food");
       lock.lock();
-      System.out.printf("Takinf %d items of food, the balance is not %d items\n", amount, bank.food);
-      bank.takeFood(amount);
+      if (bank.Food >= amount) {
+        System.out.printf("Taking %d items of food, the balance is not %d items\n", amount, bank.food);
+        bank.takeFood(amount);
+      }
       lock.unlock();
 
       try {
