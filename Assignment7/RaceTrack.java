@@ -199,7 +199,7 @@ public class RaceTrack extends JPanel {
     int winner = isWinner();
     if (winner > 0) {
       resetDistances();
-      JOptionPane.showMessageDialog(frame, "We have a winner: " + winner);
+      JOptionPane.showMessageDialog(frame, "We have a winner: car " + winner);
 
     } 
 
