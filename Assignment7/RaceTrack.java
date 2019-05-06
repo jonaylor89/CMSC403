@@ -16,9 +16,7 @@ public class RaceTrack extends JPanel {
   private static BufferedImage car;
 
   private static boolean go;
-  private static Racer r1;
-  private static Racer r2;
-  private static Racer r3;
+  private static Racer racers[3];
 
   public static void main(String argv[]) {
     frame = new JFrame("Race Track");
@@ -27,9 +25,10 @@ public class RaceTrack extends JPanel {
 
     go = false;
 
-    r1 = new Racer();
-    r2 = new Racer();
-    r3 = new Racer();
+    racers[0] = new Racer();
+    racers[1] = new Racer();
+    racers[2] = new Racer();
+    beginRacers();
 
     RaceTrack track = new RaceTrack();
     frame.add(track);
@@ -53,6 +52,7 @@ public class RaceTrack extends JPanel {
     resetButton.addActionListener(e -> {
       System.out.println("Reset");
       go = false;
+      resetDistances();
     });
 
     frame.getContentPane().add(resetButton);
@@ -67,6 +67,7 @@ public class RaceTrack extends JPanel {
       System.out.println("IO error");
       System.exit(1);
     }
+
 
     frame.setSize(500, 200);
     frame.setVisible(true);
@@ -90,6 +91,18 @@ public class RaceTrack extends JPanel {
     g.setColor(Color.RED);
     g.fillRect(10, 10, 100, 100);
 
+  }
+
+  public void resetDistances() {
+    for (Racer r : racers) {
+      r.distance = 0; 
+    }
+  }
+
+  public void beginRacers() {
+    for (Racer r : racers) {
+      r.start();
+    }
   }
 
   class Racer extends Thread {
