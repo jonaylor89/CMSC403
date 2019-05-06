@@ -195,13 +195,16 @@ public class RaceTrack extends JPanel {
       lock.unlock();
     }
     
-    repaint();
 
     int winner = isWinner();
     if (winner > 0) {
-      pauseRacers();
-      System.out.println("We have a winner! " + winner);
-    }
+      resetDistances();
+      JOptionPane.showMessageDialog(frame, "We have a winner: " + winner);
+
+    } 
+
+    repaint();
+
   }
 
   public static void resetDistances() {
