@@ -16,9 +16,9 @@ public class RaceTrack extends JPanel {
   private static BufferedImage car;
 
   private static boolean go;
-  private static int car1;
-  private static int car2;
-  private static int car3;
+  private static Racer r1;
+  private static Racer r2;
+  private static Racer r3;
 
   public static void main(String argv[]) {
     frame = new JFrame("Race Track");
@@ -26,9 +26,10 @@ public class RaceTrack extends JPanel {
     frame.setResizable(false);
 
     go = false;
-    car1 = 0;
-    car2 = 0;
-    car3 = 0;
+
+    r1 = new Racer();
+    r2 = new Racer();
+    r3 = new Racer();
 
     RaceTrack track = new RaceTrack();
     frame.add(track);
@@ -52,9 +53,6 @@ public class RaceTrack extends JPanel {
     resetButton.addActionListener(e -> {
       System.out.println("Reset");
       go = false;
-      car1 = 0;
-      car2 = 0;
-      car3 = 0;
     });
 
     frame.getContentPane().add(resetButton);
@@ -94,4 +92,18 @@ public class RaceTrack extends JPanel {
 
   }
 
+  class Racer extends Thread {
+
+    int distance;
+
+    Racer() {
+      distance = 0; 
+    }
+
+    void run() {
+      if (go) {
+      
+      }
+    }
+  }
 }
