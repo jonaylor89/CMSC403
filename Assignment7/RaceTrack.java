@@ -7,7 +7,14 @@ import javax.imageio.*;
 
 import java.io.*;
 
+import java.util.concurrent.locks.ReentrantLock;
+
+import java.util.Random;
+
 public class RaceTrack extends JPanel {
+
+  final private static int finishLine = 350;
+  private static ReentrantLock lock = new ReentrantLock();
 
   private static JFrame frame;
   private static JButton startButton;
@@ -15,8 +22,11 @@ public class RaceTrack extends JPanel {
   private static JButton resetButton;
   private static BufferedImage car;
 
-  private static boolean go;
-  private static Racer[] racers;
+  private static boolean move;
+
+  private static int racer1;
+  private static int racer2;
+  private static int racer3;
 
   public static void main(String argv[]) {
 
@@ -72,21 +82,95 @@ public class RaceTrack extends JPanel {
     /**
      * Create racers for the track
      */
-    racers = new Racer[3];
 
-    racers[0] = new Racer();
-    racers[1] = new Racer();
-    racers[2] = new Racer();
+    racer1 = 0;
+    racer2 = 0; 
+    racer3 = 0;
 
+    move = false;
     /**
      * Start racer threads to wait for the start
      */
-    runRacers();
+    
+    new Thread(() -> {
+        Random rand = new Random();
+        while (true) {
+          if (move) {
+            if (racer1 < finishLine) {
+              int deltaX = rand.nextInt(11);
+
+              if (racer1 + deltaX > finishLine) {
+                racer1 = finishLine; 
+              } else {
+                racer1 += deltaX; 
+              }
+            }
+         
+          }
+
+          try {
+            Thread.sleep(100);
+          } catch (Exception e) {
+            return; 
+          }
+        }
+      }).start();
+
+      new Thread(() -> {
+        Random rand = new Random();
+        while (true) {
+          if (move) {
+            if (racer2 < finishLine) {
+              int deltaX = rand.nextInt(11);
+
+              if (racer2 + deltaX > finishLine) {
+                racer1 = finishLine; 
+              } else {
+                racer2 += deltaX; 
+              }
+
+            }
+         
+          }
+
+          try {
+            Thread.sleep(100);
+          } catch (Exception e) {
+            return; 
+          }
+        }
+      }).start();
+
+      new Thread(() -> {
+        Random rand = new Random();
+        while (true) {
+          if (move) {
+            if (racer3 < finishLine) {
+              int deltaX = rand.nextInt(11);
+
+              if (racer3 + deltaX > finishLine) {
+                racer1 = finishLine; 
+              } else {
+                racer3 += deltaX; 
+              }
+
+            }
+         
+          }
+
+          try {
+            Thread.sleep(100);
+          } catch (Exception e) {
+            return; 
+          }
+        }
+      }).start();
 
     /**
      * Size and show the window
      */
     frame.setSize(500, 200);
+    frame.repaint();
     frame.setVisible(true);
 
   }
@@ -101,73 +185,80 @@ public class RaceTrack extends JPanel {
     g.fillRect(25, 95, 400, 15);
     g.fillRect(25, 135, 400, 15);
 
-    // Draw the images at the beginning of the track
-    g.drawImage(car, racers[0].distance + 25, 50, this);
-    g.drawImage(car, racers[1].distance + 25, 90, this);
-    g.drawImage(car, racers[2].distance + 25, 130, this);
+    lock.lock();
+    try {
+      // Draw the images at the beginning of the track
+      g.drawImage(car, racer1 + 25, 50, this);
+      g.drawImage(car, racer2 + 25, 90, this);
+      g.drawImage(car, racer3 + 25, 130, this);
+    } finally {
+      lock.unlock();
+    }
+    
+    repaint();
 
-  }
-
-  public static void resetDistances() {
-    for (Racer r : racers) {
-      System.out.println("Reset " + r.go);
-      r.distance = 0; 
-      r.go = false;
+    int winner = isWinner();
+    if (winner > 0) {
+      pauseRacers();
+      System.out.println("We have a winner! " + winner);
     }
   }
 
-  public static void runRacers() {
-    for (Racer r : racers) {
-      r.start();
+  public static void resetDistances() {
+    lock.lock();
+
+    try{
+      move = false;
+
+      racer1 = 0;
+      racer2 = 0;
+      racer3 = 0;
+
+    } finally {
+      lock.unlock();
     }
   }
 
   public static void startRacers() {
-    for (Racer r : racers) {
-      System.out.println("Start " + r.go);
-      r.go = true; 
+    lock.lock();
+    
+    try {
+      move = true;
+    } finally {
+      lock.unlock();
     }
   }
 
   public static void pauseRacers() {
-    for (Racer r : racers) {
-      System.out.println("Pause " + r.go);
-      r.go = false; 
+    lock.lock();
+
+    try {
+      move = false;
+    } finally {
+      lock.unlock();
     }
   }
-}
 
-class Racer extends Thread {
+  public static int isWinner() {
+    lock.lock();
 
-  int distance;
-  boolean go;
-
-  public Racer() {
-    distance = 0; 
-    go = false;
-  }
-
-  @Override
-  public void run() {
-    while (true) {
-      if (go) {
-
-        System.out.println("UMMMMMMM");
-
-        if (distance < 100) {
-          System.out.println("Updating distance " + distance);
-          distance += 5;
-        }
-        // Check to make sure I'm not at the max
-        // int deltaX = rand.nextInt(11);
-    
-        try {
-          Thread.sleep(500);
-        } catch (InterruptedException e) {
-          return;
-        }
+    try {
+      if (racer1 >= finishLine) {
+        return 1; 
       }
+      if (racer2 >= finishLine) {
+        return 2; 
+      }
+      if (racer3 >= finishLine) {
+        return 3; 
+      }
+
+      return 0;
+
+    } finally {
+      lock.unlock();
     }
   }
+
 }
 
