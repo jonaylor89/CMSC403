@@ -16,19 +16,17 @@ public class RaceTrack extends JPanel {
   private static BufferedImage car;
 
   private static boolean go;
-  private static Racer racers[3];
+  private static Racer[] racers;
 
   public static void main(String argv[]) {
     frame = new JFrame("Race Track");
     frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     frame.setResizable(false);
 
-    go = false;
-
     racers[0] = new Racer();
     racers[1] = new Racer();
     racers[2] = new Racer();
-    beginRacers();
+    runRacers();
 
     RaceTrack track = new RaceTrack();
     frame.add(track);
@@ -36,22 +34,21 @@ public class RaceTrack extends JPanel {
     startButton = new JButton("Start");
     startButton.addActionListener(e -> {
       System.out.println("Start");
-      go = true;
-      
+      startRacers();
     });
     frame.getContentPane().add(startButton);
 
     pauseButton = new JButton("Pause");
     pauseButton.addActionListener(e -> {
       System.out.println("Pause");
-      go = false;
+      pauseRacers();
     });
     frame.getContentPane().add(pauseButton);
 
     resetButton = new JButton("Reset");
     resetButton.addActionListener(e -> {
       System.out.println("Reset");
-      go = false;
+      pauseRacers();
       resetDistances();
     });
 
@@ -93,30 +90,45 @@ public class RaceTrack extends JPanel {
 
   }
 
-  public void resetDistances() {
+  public static void resetDistances() {
     for (Racer r : racers) {
       r.distance = 0; 
     }
   }
 
-  public void beginRacers() {
+  public static void runRacers() {
     for (Racer r : racers) {
       r.start();
     }
   }
 
-  class Racer extends Thread {
-
-    int distance;
-
-    Racer() {
-      distance = 0; 
+  public static void startRacers() {
+    for (Racer r : racers) {
+      r.go = true; 
     }
+  }
 
-    void run() {
-      if (go) {
-      
-      }
+  public static void pauseRacers() {
+    for (Racer r : racers) {
+      r.go = false; 
     }
   }
 }
+
+class Racer extends Thread {
+
+  int distance;
+  boolean go;
+
+  public Racer() {
+    distance = 0; 
+    go = false;
+  }
+
+  public void run() {
+    if (go) {
+    
+    }
+  }
+}
+
